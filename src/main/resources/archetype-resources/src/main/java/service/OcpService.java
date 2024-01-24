@@ -84,18 +84,16 @@ public class OcpService {
      * @return projects projects
      * @throws IOException IOException
      */
-    public JsonNode getAllDeploymentsConfig (String token)
+    public JsonNode getAllDeploymentsConfig (String token, String paas, String namespace)
             throws IOException {
+        String ocpApiBuilder="/apis/apps/v1/namespaces/";
 
-        String ocpApiBuilder="/apis/apps.openshift.io/v1/namespaces/";
-        String projectName = "robertosegovia-dev";
-
-        String paas = "https://api.sandbox-m3.1530.p1.openshiftapps.com:6443"+ocpApiBuilder+projectName+DEPLOYMENTCONFIG;
+        String uri = paas +ocpApiBuilder+namespace+DEPLOYMENTCONFIG;
 
         HttpHeaders authHeaders = Util.createTokenAuthorizationHeaders(token);
         HttpEntity<String[]> httpEntity = new HttpEntity<>(authHeaders);
 
-        ResponseEntity<String> response = restTemplate().exchange(paas,
+        ResponseEntity<String> response = restTemplate().exchange(uri,
                 HttpMethod.GET,  httpEntity, String.class);
         String responseData;
         responseData = response.getBody();
@@ -111,15 +109,14 @@ public class OcpService {
      * @return services services
      * @throws IOException IOException
      */
-    public JsonNode getAllRoutesFromProject ( String token) throws IOException {
-        String projectName = "robertosegovia-dev";
-        String paas = "https://api.sandbox-m3.1530.p1.openshiftapps.com:6443"
-                +ROUTE+projectName+"/routes";
+    public JsonNode getAllRoutesFromProject (String token, String paas, String namespace) throws IOException {
+
+        String uri = paas + ROUTE+namespace+"/routes";
 
         HttpHeaders authHeaders = Util.createTokenAuthorizationHeaders(token);
         HttpEntity<String[]> httpEntity = new HttpEntity<>(authHeaders);
 
-        ResponseEntity<String> response = restTemplate().exchange(paas,
+        ResponseEntity<String> response = restTemplate().exchange(uri,
                 HttpMethod.GET,  httpEntity, String.class);
         String responseData;
         responseData = response.getBody();
@@ -136,18 +133,18 @@ public class OcpService {
      * @return projects projects
      * @throws IOException IOException
      */
-    public JsonNode getAllDeployments ( String token)
+    public JsonNode getAllDeployments (String token, String paas, String namespace)
             throws IOException {
-        String projectName = "robertosegovia-dev";
+
         String ocpApiBuilder="/apis/apps/v1/namespaces/";
 
-        String paas = "https://api.sandbox-m3.1530.p1.openshiftapps.com:6443"+ocpApiBuilder
-                +projectName+DEPLOYMENTS;
+        String uri = paas +ocpApiBuilder
+                +namespace+DEPLOYMENTS;
 
         HttpHeaders authHeaders = Util.createTokenAuthorizationHeaders(token);
         HttpEntity<String[]> httpEntity = new HttpEntity<>(authHeaders);
 
-        ResponseEntity<String> response = restTemplate().exchange(paas,
+        ResponseEntity<String> response = restTemplate().exchange(uri,
                 HttpMethod.GET,  httpEntity, String.class);
         String responseData;
         responseData = response.getBody();
@@ -164,19 +161,17 @@ public class OcpService {
      * @return projects projects
      * @throws IOException IOException
      */
-    public JsonNode getAllStatefulSets (String token)
+    public JsonNode getAllStatefulSets (String token, String paas, String namespace)
             throws IOException {
 
-        String projectName = "robertosegovia-dev";
         String ocpApiBuilder="/apis/apps/v1/namespaces/";
 
-        String paas = "https://api.sandbox-m3.1530.p1.openshiftapps.com:6443"
-                +ocpApiBuilder+projectName+STATEFULSETS;
+        String uri = paas +ocpApiBuilder+namespace+STATEFULSETS;
 
         HttpHeaders authHeaders = Util.createTokenAuthorizationHeaders(token);
         HttpEntity<String[]> httpEntity = new HttpEntity<>(authHeaders);
 
-        ResponseEntity<String> response = restTemplate().exchange(paas,
+        ResponseEntity<String> response = restTemplate().exchange(uri,
                 HttpMethod.GET,  httpEntity, String.class);
         String responseData;
         responseData = response.getBody();
@@ -194,20 +189,18 @@ public class OcpService {
      * @return projects projects
      * @throws IOException IOException
      */
-    public JsonNode getAllJobs ( String token)
+    public JsonNode getAllJobs (String token, String paas, String namespace)
             throws IOException {
-        String projectName = "robertosegovia-dev";
 
         //String ocpApiBuilder="/apis/batch/v1/namespaces/";
         String ocpApiBuilder = "/oapi/v1/namespaces/";
 
-        String paas = "https://api.sandbox-m3.1530.p1.openshiftapps.com:6443"
-                +ocpApiBuilder+projectName+JOBS;
+        String uri = paas +ocpApiBuilder+namespace+JOBS;
 
         HttpHeaders authHeaders = Util.createTokenAuthorizationHeaders(token);
         HttpEntity<String[]> httpEntity = new HttpEntity<>(authHeaders);
 
-        ResponseEntity<String> response = restTemplate().exchange(paas,
+        ResponseEntity<String> response = restTemplate().exchange(uri,
                 HttpMethod.GET,  httpEntity, String.class);
         String responseData;
         responseData = response.getBody();

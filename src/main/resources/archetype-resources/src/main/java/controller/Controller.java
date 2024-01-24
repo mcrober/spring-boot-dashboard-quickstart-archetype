@@ -16,18 +16,24 @@ class Controller {
 
 
     @GetMapping("/deployments")
-    JsonNode deployments( @RequestHeader String token) throws IOException {
+    JsonNode deployments( @RequestHeader String token,
+                          @RequestHeader String paas,
+                          @RequestHeader String namespace
+    ) throws IOException {
         try {
-            return ocpService.getAllDeployments(token);
+            return ocpService.getAllDeployments(token,paas,namespace);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
     @GetMapping("/services")
-    JsonNode services(@RequestHeader String token ) throws IOException {
+    JsonNode services(@RequestHeader String token,
+                      @RequestHeader String paas,
+                      @RequestHeader String namespace
+    ) throws IOException {
         try {
-            return ocpService.getAllDeployments(token);
+            return ocpService.getAllStatefulSets(token,paas,namespace);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
