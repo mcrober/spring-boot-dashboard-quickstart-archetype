@@ -27,7 +27,7 @@ class Controller {
         }
     }
 
-    @GetMapping("/services")
+    @GetMapping("/statefulSets")
     JsonNode services(@RequestHeader String token,
                       @RequestHeader String paas,
                       @RequestHeader String namespace

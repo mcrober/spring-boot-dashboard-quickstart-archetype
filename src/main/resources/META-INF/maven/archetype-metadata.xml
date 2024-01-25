@@ -6,6 +6,12 @@
     <fileSet filtered="true" packaged="true">
       <directory>src/main/java</directory>
     </fileSet>
+    <fileSet filtered="true" encoding="UTF-8">
+      <directory>src/main/resources</directory>
+      <includes>
+        <indlude>**/*.properties</indlude>
+      </includes>
+    </fileSet>
     <fileSet>
       <directory>src/test/java</directory>
     </fileSet>
