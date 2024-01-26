@@ -30,7 +30,7 @@ public class GitReposResponse {
     /**
      * Repo owner
      */
-    private String owner;
+    private RepoOwner owner;
 
     /**
      * Repo url

@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
  */
 public interface GitService {
 
+    public String getRepos();
+
     /**
      * Get pom from git and set data
      * @param gitUriPom pom uri

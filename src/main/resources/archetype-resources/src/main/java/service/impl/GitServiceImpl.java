@@ -17,6 +17,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -94,6 +95,18 @@ public class GitServiceImpl implements GitService {
     }
 
 
+    public String getRepos (){
+        String reposUriPaged="https://api.github.com/orgs/barmanyrober/repos";
+        String token="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";
+
+        HttpHeaders authHeaders = Util.createTokenAuthorizationHeaders(token);
+        HttpEntity<String[]> httpEntity = new HttpEntity<>(authHeaders);
+
+        //GitReposResponse
+        ResponseEntity<String> reposPage = restTemplate.exchange(reposUriPaged, HttpMethod.GET, httpEntity, String.class);
+
+        return reposPage.toString();
+    }
 
     /**
      * getDataGit

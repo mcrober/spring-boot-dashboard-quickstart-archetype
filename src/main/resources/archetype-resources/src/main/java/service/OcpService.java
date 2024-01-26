@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 import org.springframework.context.annotation.Bean;
+import io.fabric8.openshift.api.model.DeploymentConfigList;
 
 /**
 * Class to obtein info from Openshift API
@@ -84,21 +85,29 @@ public class OcpService {
      * @return projects projects
      * @throws IOException IOException
      */
-    public JsonNode getAllDeploymentsConfig (String token, String paas, String namespace)
+    /**
+     * Returns all deployments from a project in openshift
+     * This method infers the pass uri from parameter envCluster
+     *
+     * @param token token
+     * @param token  token
+     * @return projects projects
+     * @throws IOException IOException
+     */
+    public DeploymentConfigList getAllDeploymentsConfig (String token, String paas, String namespace)
             throws IOException {
-        String ocpApiBuilder="/apis/apps/v1/namespaces/";
-
+        String ocpApiBuilder="/apis/apps.openshift.io/v1/namespaces/";
         String uri = paas +ocpApiBuilder+namespace+DEPLOYMENTCONFIG;
 
         HttpHeaders authHeaders = Util.createTokenAuthorizationHeaders(token);
         HttpEntity<String[]> httpEntity = new HttpEntity<>(authHeaders);
 
-        ResponseEntity<String> response = restTemplate().exchange(uri,
-                HttpMethod.GET,  httpEntity, String.class);
-        String responseData;
-        responseData = response.getBody();
+        ResponseEntity<DeploymentConfigList> response = restTemplate().exchange(uri,
+                HttpMethod.GET,  httpEntity, DeploymentConfigList.class);
 
-        return JsonTools.convertToJson(responseData);
+        DeploymentConfigList responseData = response.getBody();
+
+        return responseData;
 
     }
 
