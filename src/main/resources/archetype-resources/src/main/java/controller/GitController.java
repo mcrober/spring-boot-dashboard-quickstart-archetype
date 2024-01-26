@@ -19,7 +19,7 @@ class GitController {
 
 
     @GetMapping("/repos")
-    String deployments(    ) throws IOException {
-        return gitService.getRepos();
+    String repos (    ) throws IOException {
+        return gitService.getRepos("","");
     }
 }

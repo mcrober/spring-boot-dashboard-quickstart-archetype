@@ -10,7 +10,8 @@ import org.springframework.http.ResponseEntity;
  */
 public interface GitService {
 
-    public String getRepos();
+    public String getRepos(String token,
+                           String paas);
 
     /**
      * Get pom from git and set data

@@ -95,15 +95,15 @@ public class GitServiceImpl implements GitService {
     }
 
 
-    public String getRepos (){
+    public String getRepos (String token,
+                            String paas){
         String reposUriPaged="https://api.github.com/orgs/barmanyrober/repos";
-        String token="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";
 
         HttpHeaders authHeaders = Util.createTokenAuthorizationHeaders(token);
         HttpEntity<String[]> httpEntity = new HttpEntity<>(authHeaders);
 
-        //GitReposResponse
-        ResponseEntity<String> reposPage = restTemplate.exchange(reposUriPaged, HttpMethod.GET, httpEntity, String.class);
+        //GitReposResponse / String
+        ResponseEntity<GitReposResponse> reposPage = restTemplate.exchange(reposUriPaged, HttpMethod.GET, httpEntity, GitReposResponse.class);
 
         return reposPage.toString();
     }

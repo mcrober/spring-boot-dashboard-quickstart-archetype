@@ -13,7 +13,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 
 /**
- * Table INPUT_GIT_REPOSITORIES object
+ * Table INPUT_DEPLOYMENTS object
  */
 @Entity
 @Table(name = "INPUT_DEPLOYMENTS")

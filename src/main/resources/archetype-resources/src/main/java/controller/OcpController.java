@@ -3,10 +3,11 @@ package ${package}.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import ${package}.service.OcpService;
+import ${package}.model.dao.Deployment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import io.fabric8.openshift.api.model.DeploymentConfigList;
-
+import ${package}.springdatajpa.DeploymentRepository;
 import java.io.IOException;
 
 @RestController
