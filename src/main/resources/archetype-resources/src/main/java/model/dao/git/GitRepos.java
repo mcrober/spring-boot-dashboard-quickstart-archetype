@@ -1,29 +1,24 @@
-package ${package}.model.dao;
-
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.springframework.data.domain.Persistable;
+package ${package}.model.dao.git;
 
 import jakarta.persistence.*;
+import lombok.*;
+import org.springframework.data.domain.Persistable;
+
 import java.io.Serializable;
 import java.time.LocalDate;
 
 /**
- * Table INPUT_DEPLOYMENTS object
+ * Table INPUT_GIT_REPOSITORIES object
  */
 @Entity
-@Table(name = "INPUT_DEPLOYMENTS")
+@Table(name = "INPUT_GIT_REPOSITORIES")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@IdClass(Deployment.DeploymentKey.class)
+@IdClass(GitRepos.GitReposKey.class)
 @Builder
-public class Deployment implements Persistable<Deployment.DeploymentKey> {
+public class GitRepos implements Persistable<GitRepos.GitReposKey> {
     // All git repos and organizations for matching with deployment configs
 
     /**
@@ -36,14 +31,14 @@ public class Deployment implements Persistable<Deployment.DeploymentKey> {
      * repo Name
      */
     @Id
-    @Column(name="REPO_NAME", nullable = false)
+    @Column(name="REPO_NAME")
     private String repoName;
 
     /**
      * organization
      */
     @Id
-    @Column(name="ORGANIZATION", nullable = false)
+    @Column(name="ORGANIZATION")
     private String organization;
 
     /**
@@ -60,11 +55,11 @@ public class Deployment implements Persistable<Deployment.DeploymentKey> {
 
     /**
      * Object id
-     * @return DeploymentKey
+     * @return GitReposKey
      */
     @Override
-    public Deployment.DeploymentKey getId() {
-        return new DeploymentKey(repoName, organization);
+    public GitRepos.GitReposKey getId() {
+        return new GitReposKey(repoName, organization);
     }
 
     /**
@@ -83,7 +78,7 @@ public class Deployment implements Persistable<Deployment.DeploymentKey> {
     @AllArgsConstructor
     @NoArgsConstructor
     @Getter
-    public static class DeploymentKey implements Serializable {
+    public static class GitReposKey implements Serializable {
 
         /**
          * UID

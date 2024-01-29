@@ -1,7 +1,7 @@
 package ${package}.service;
 
-import ${package}.model.*;
-
+import ${package}.model.dao.git.GitReposResponse;
+import ${package}.model.dao.git.GitResponse;
 
 import org.springframework.http.ResponseEntity;
 
@@ -10,7 +10,13 @@ import org.springframework.http.ResponseEntity;
  */
 public interface GitService {
 
-    public String getRepos(String token,
+    /**
+     * getRepos
+     * @param token
+     * @param paas
+     * @return
+     */
+    public GitReposResponse[] getRepos(String token,
                            String paas);
 
     /**

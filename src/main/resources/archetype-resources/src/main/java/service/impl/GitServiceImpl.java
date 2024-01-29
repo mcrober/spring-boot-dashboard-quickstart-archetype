@@ -4,7 +4,9 @@ package ${package}.service.impl;
 import com.google.gson.Gson;
 
 
-import ${package}.model.*;
+import ${package}.model.dao.git.GitReposResponse;
+import ${package}.model.dao.git.GitResponse;
+import ${package}.model.PackageJson;
 import ${package}.service.GitService;
 import ${package}.utils.*;
 
@@ -94,18 +96,22 @@ public class GitServiceImpl implements GitService {
 
     }
 
-
-    public String getRepos (String token,
+    /**
+     * getRepos
+     * @param token token
+     * @param paas paas
+     * @return
+     */
+    public GitReposResponse[] getRepos (String token,
                             String paas){
-        String reposUriPaged="https://api.github.com/orgs/barmanyrober/repos";
 
         HttpHeaders authHeaders = Util.createTokenAuthorizationHeaders(token);
         HttpEntity<String[]> httpEntity = new HttpEntity<>(authHeaders);
 
-        //GitReposResponse / String
-        ResponseEntity<GitReposResponse> reposPage = restTemplate.exchange(reposUriPaged, HttpMethod.GET, httpEntity, GitReposResponse.class);
+        ResponseEntity<GitReposResponse[]> response = restTemplate.exchange(paas, HttpMethod.GET, httpEntity, GitReposResponse[].class);
 
-        return reposPage.toString();
+        GitReposResponse[] reposPage = response.getBody();
+        return reposPage;
     }
 
     /**

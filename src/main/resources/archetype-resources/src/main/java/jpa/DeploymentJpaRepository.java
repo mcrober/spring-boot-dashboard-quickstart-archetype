@@ -1,6 +1,6 @@
 package ${package}.jpa;
 
-import ${package}.model.dao.Deployment;
+import ${package}.model.dao.git.Deployment;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;

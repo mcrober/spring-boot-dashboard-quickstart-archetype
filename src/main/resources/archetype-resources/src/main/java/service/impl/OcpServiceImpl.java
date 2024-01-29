@@ -1,7 +1,8 @@
-package ${package}.service;
+package org.barmanyrober.service.impl;
 
 
 import com.fasterxml.jackson.databind.JsonNode;
+import ${package}.service.OcpService;
 import ${package}.utils.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,13 +22,13 @@ import org.springframework.context.annotation.Bean;
 import io.fabric8.openshift.api.model.DeploymentConfigList;
 
 /**
-* Class to obtein info from Openshift API
-*/
+ * Class to obtein info from Openshift API
+ */
 @Getter
 @Setter
 @Service
 @Slf4j
-public class OcpServiceImpl {
+public class OcpServiceImpl implements OcpService {
 
     /**
      * AUTHORIZATION
@@ -68,36 +69,75 @@ public class OcpServiceImpl {
     private Map<String, Map<String, Map<String, List<String>>>> ocpTokenClusterUrls;
 
 
-    public OcpServiceImpl (){
+    public OcpServiceImpl (){ }
 
+    /**
+     * Returns all deployments from a project in openshift
+     * This method infers the pass uri from parameter envCluster
+     *
+     * @param token token
+     * @param paas  paas
+     * @return namespace namespace
+     */
+    public DeploymentConfigList getAllDeploymentsConfig (String token, String paas, String namespace) {
+        String ocpApiBuilder="/apis/apps.openshift.io/v1/namespaces/";
+        String uri = paas +ocpApiBuilder+namespace+DEPLOYMENTCONFIG;
+
+        HttpHeaders authHeaders = Util.createTokenAuthorizationHeaders(token);
+        HttpEntity<String[]> httpEntity = new HttpEntity<>(authHeaders);
+
+        ResponseEntity<DeploymentConfigList> response = restTemplate().exchange(uri,
+                HttpMethod.GET,  httpEntity, DeploymentConfigList.class);
+
+        DeploymentConfigList responseData = response.getBody();
+
+        return responseData;
 
     }
 
-
-
-
     /**
      * Returns all deployments from a project in openshift
      * This method infers the pass uri from parameter envCluster
      *
      * @param token token
-     * @param token  token
      * @return projects projects
      * @throws IOException IOException
      */
-    /**
-     * Returns all deployments from a project in openshift
-     * This method infers the pass uri from parameter envCluster
-     *
-     * @param token token
-     * @param token  token
-     * @return projects projects
-     * @throws IOException IOException
-     */
-    public DeploymentConfigList getAllDeploymentsConfig (String token, String paas, String namespace)
+    public JsonNode getAllDeployments (String token, String paas, String namespace)
             throws IOException {
-        String ocpApiBuilder="/apis/apps.openshift.io/v1/namespaces/";
-        String uri = paas +ocpApiBuilder+namespace+DEPLOYMENTCONFIG;
+
+        String ocpApiBuilder="/apis/apps/v1/namespaces/";
+
+        String uri = paas +ocpApiBuilder
+                +namespace+DEPLOYMENTS;
+
+        HttpHeaders authHeaders = Util.createTokenAuthorizationHeaders(token);
+        HttpEntity<String[]> httpEntity = new HttpEntity<>(authHeaders);
+
+        ResponseEntity<String> response = restTemplate().exchange(uri,
+                HttpMethod.GET,  httpEntity, String.class);
+        String responseData;
+        responseData = response.getBody();
+
+        return JsonTools.convertToJson(responseData);
+
+    }
+
+    /**
+     * Returns all deployments from a project in openshift
+     * This method infers the pass uri from parameter envCluster
+     *
+     * @param token token
+     * @return projects projects
+     * @throws IOException IOException
+     */
+    public DeploymentConfigList getAllDeployments2 (String token, String paas, String namespace)
+            throws IOException {
+
+        String ocpApiBuilder="/apis/apps/v1/namespaces/";
+
+        String uri = paas +ocpApiBuilder
+                +namespace+DEPLOYMENTS;
 
         HttpHeaders authHeaders = Util.createTokenAuthorizationHeaders(token);
         HttpEntity<String[]> httpEntity = new HttpEntity<>(authHeaders);
@@ -134,33 +174,7 @@ public class OcpServiceImpl {
     }
 
 
-    /**
-     * Returns all deployments from a project in openshift
-     * This method infers the pass uri from parameter envCluster
-     *
-     * @param token token
-     * @return projects projects
-     * @throws IOException IOException
-     */
-    public JsonNode getAllDeployments (String token, String paas, String namespace)
-            throws IOException {
 
-        String ocpApiBuilder="/apis/apps/v1/namespaces/";
-
-        String uri = paas +ocpApiBuilder
-                +namespace+DEPLOYMENTS;
-
-        HttpHeaders authHeaders = Util.createTokenAuthorizationHeaders(token);
-        HttpEntity<String[]> httpEntity = new HttpEntity<>(authHeaders);
-
-        ResponseEntity<String> response = restTemplate().exchange(uri,
-                HttpMethod.GET,  httpEntity, String.class);
-        String responseData;
-        responseData = response.getBody();
-
-        return JsonTools.convertToJson(responseData);
-
-    }
 
     /**
      * Returns all getAllStatefulSets from a project in openshift
@@ -168,10 +182,8 @@ public class OcpServiceImpl {
      *
      * @param token  token
      * @return projects projects
-     * @throws IOException IOException
      */
-    public JsonNode getAllStatefulSets (String token, String paas, String namespace)
-            throws IOException {
+    public JsonNode getAllStatefulSets (String token, String paas, String namespace) throws IOException {
 
         String ocpApiBuilder="/apis/apps/v1/namespaces/";
 

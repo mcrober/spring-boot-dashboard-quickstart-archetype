@@ -1,14 +1,11 @@
 
-package ${package}.model;
+package ${package}.model.dao.git;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.data.domain.Persistable;
+import org.barmanyrober.model.Links;
 
 @Getter
 @Setter
@@ -25,6 +22,7 @@ public class GitResponse {
     private String type;
     private String content;
     private String encoding;
-    private Links  links;
+    private Links links;
+
 
 }

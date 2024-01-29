@@ -1,29 +1,24 @@
-package ${package}.model.dao;
-
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.springframework.data.domain.Persistable;
+package ${package}.model.dao.git;
 
 import jakarta.persistence.*;
+import lombok.*;
+import org.springframework.data.domain.Persistable;
+
 import java.io.Serializable;
 import java.time.LocalDate;
 
 /**
- * Table INPUT_GIT_REPOSITORIES object
+ * Table INPUT_DEPLOYMENTS object
  */
 @Entity
-@Table(name = "INPUT_GIT_REPOSITORIES")
+@Table(name = "INPUT_DEPLOYMENTS")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@IdClass(GitRepos.GitReposKey.class)
+@IdClass(Deployment.DeploymentKey.class)
 @Builder
-public class GitRepos implements Persistable<GitRepos.GitReposKey> {
+public class Deployment implements Persistable<Deployment.DeploymentKey> {
     // All git repos and organizations for matching with deployment configs
 
     /**
@@ -60,11 +55,11 @@ public class GitRepos implements Persistable<GitRepos.GitReposKey> {
 
     /**
      * Object id
-     * @return GitReposKey
+     * @return DeploymentKey
      */
     @Override
-    public GitRepos.GitReposKey getId() {
-        return new GitReposKey(repoName, organization);
+    public Deployment.DeploymentKey getId() {
+        return new DeploymentKey(repoName, organization);
     }
 
     /**
@@ -83,7 +78,7 @@ public class GitRepos implements Persistable<GitRepos.GitReposKey> {
     @AllArgsConstructor
     @NoArgsConstructor
     @Getter
-    public static class GitReposKey implements Serializable {
+    public static class DeploymentKey implements Serializable {
 
         /**
          * UID

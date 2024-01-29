@@ -1,8 +1,11 @@
-package org.barmanyrober.controller;
+package ${package}.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.barmanyrober.service.GitService;
-import org.barmanyrober.service.OcpService;
+import ${package}.service.GitService;
+import ${package}.model.dao.git.GitReposResponse;
+import ${package}.springdatajpa.GitRepository;
+import ${package}.model.dao.git.GitRepos;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -17,9 +20,17 @@ class GitController {
     @Autowired
     private GitService gitService;
 
+    @Autowired
+    private GitRepository gitRepository;
 
     @GetMapping("/repos")
-    String repos (    ) throws IOException {
-        return gitService.getRepos("","");
+    GitReposResponse[] repos ( @RequestHeader String token,
+                               @RequestHeader String paas   ) throws IOException {
+
+        GitReposResponse[] gitResponse = gitService.getRepos(token,paas);
+
+        GitRepos gitRepos = new GitRepos();
+        gitRepository.save(gitRepos);
+        return gitResponse;
     }
 }
