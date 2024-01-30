@@ -153,9 +153,9 @@ public class GitServiceImpl implements GitService {
      * @throws IOException IOException
      * @throws XmlPullParserException XmlPullParserException
      */
-    private void callGitUriAndRegisterPomInfo(String gitUri,  String gitUriPackage)
+    private String callGitUriAndRegisterPomInfo(String gitUri,  String gitUriPackage)
             throws IOException, XmlPullParserException {
-
+        String parent ;
         ResponseEntity<GitResponse> response = callGitRetryingOnReferenceError(gitUri);
 
         if(response.getBody() == null){
@@ -166,9 +166,10 @@ public class GitServiceImpl implements GitService {
             String rawPom = PomUtils.decodeString(responseBody.getContent());
             Model pomModel = PomUtils.readMavenPom(rawPom);
 
-            String parent = pomModel.getParent() == null ? "noParent" : pomModel.getParent().toString();
-
+            parent = pomModel.getParent() == null ? "noParent" : pomModel.getParent().toString();
+            System.out.println (parent);
         }
+        return parent;
     }
 
     /**

@@ -60,9 +60,6 @@ public class Deployment implements Persistable<Deployment.DeploymentKey> {
     @Column(name = "OCP_ENVIRONMENT")
     private String environment;
 
-
-
-
     /**
      * Id
      * Column OCP_DEPLOY_NAME
@@ -78,12 +75,6 @@ public class Deployment implements Persistable<Deployment.DeploymentKey> {
     @Column(name = "OCP_MICRO_NAME")
     private String microName;
 
-    /**
-     * Microservice (block) name as it appears in dynatrace
-     * Column OCP_MICRO_NAME
-     */
-    @Column(name = "OCP_DYNA_MICRO_NAME")
-    private String dynaMicroName;
 
     /**
      * Column OCP_DEPLOY_IMAGE
@@ -97,15 +88,11 @@ public class Deployment implements Persistable<Deployment.DeploymentKey> {
     @Column(name = "OCP_DEPLOY_REPLICAS")
     private Integer replicas;
 
-
-
     /**
      * Column OCP_ARTIFACT_URL
      */
     @Column(name = "OCP_ARTIFACT_URL")
     private String artifactUrl;
-
-
 
     /**
      * Technology version
@@ -173,18 +160,6 @@ public class Deployment implements Persistable<Deployment.DeploymentKey> {
     @Column(name = "HC_LIVENESS")
     private String livenessPath;
 
-    /**
-     * Microfront lib
-     */
-    @Column(name= "MICROFRONT")
-    private String microFront;
-
-
-    /**
-     * Microfront version
-     */
-    @Column(name= "MICROFRONT_VERSION")
-    private String microFrontVersion;
 
     @Override
     public DeploymentKey getId() {

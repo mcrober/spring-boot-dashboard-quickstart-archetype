@@ -5,7 +5,7 @@
   <fileSets>
 
     <fileSet filtered="false">
-      <directory>src/resources</directory>
+      <directory>src/main/resources</directory>
     </fileSet>
     <fileSet filtered="true" packaged="true">
       <directory>src/main/java</directory>

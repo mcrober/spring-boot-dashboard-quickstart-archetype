@@ -44,13 +44,11 @@ class GitController {
     }
 
     @GetMapping("/pom")
-    GitReposResponse[] pom ( @RequestHeader String token,
+    void pom ( @RequestHeader String token,
                              @RequestHeader String paas   ) throws IOException {
 
         gitService.getDataGit(token,paas,paas);
 
-
-        return null;
     }
 
 }

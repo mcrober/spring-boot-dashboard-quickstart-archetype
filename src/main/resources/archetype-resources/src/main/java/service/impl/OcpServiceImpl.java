@@ -129,14 +129,10 @@ public class OcpServiceImpl implements OcpService {
 
         for (final JsonNode items : itemsDeployments) {
 
-            gDeployment ocpDeployment = extractOpenshiftDeploymentConfigTo(items, "");
+            Deployment ocpDeployment = extractOpenshiftDeploymentConfigTo(items, "");
             ocpDeploymentList.add(ocpDeployment);
         }
-
-
         return ocpDeploymentList;
-
-
     }
 
     public Deployment extractOpenshiftDeploymentConfigTo(JsonNode item,  String projectName) {
@@ -149,9 +145,6 @@ public class OcpServiceImpl implements OcpService {
         deployment.setEnvironment("dev");
         deployment.setDate(LocalDate.now());
         deployment.setDeployName(deploymentName);
-
-        deployment.setDynaMicroName("");
-
 
         JsonNode containers = item.get("spec").get("template").get("spec").get("containers");
         String imageName="";
@@ -183,7 +176,6 @@ public class OcpServiceImpl implements OcpService {
         deployment.setLivenessPath(livenessPath);
         deployment.setMicroName(deploymentName);
         deployment.setDeployImage(imageName);
-
 
         //set url
         if (envVarList.get("BUILD_URL") == null) {
