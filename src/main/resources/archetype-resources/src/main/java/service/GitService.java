@@ -21,14 +21,12 @@ public interface GitService {
 
     /**
      * Get pom from git and set data
+     * @param token pom uri
      * @param gitUriPom pom uri
      * @param gitUriPackage package uri
-     * @param darwinParentModel darwin model
-     * @param nuarParentModel nuar model
-     * @param realTimeParenModel realtime model
+
      */
-    void getDataGit(String gitUriPom, String gitUriPackage, String darwinParentModel,
-                    String nuarParentModel, String realTimeParenModel);
+    void getDataGit(String token, String gitUriPom, String gitUriPackage);
 
     /**
      * Call git and retry with develop branch if response is reference error

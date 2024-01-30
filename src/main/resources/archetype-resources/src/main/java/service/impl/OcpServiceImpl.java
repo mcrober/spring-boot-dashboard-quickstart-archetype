@@ -3,6 +3,7 @@ package org.barmanyrober.service.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import ${package}.service.OcpService;
+import ${package}.model.dao.git.Deployment;
 import ${package}.utils.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,6 +16,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -95,6 +99,7 @@ public class OcpServiceImpl implements OcpService {
 
     }
 
+
     /**
      * Returns all deployments from a project in openshift
      * This method infers the pass uri from parameter envCluster
@@ -103,52 +108,100 @@ public class OcpServiceImpl implements OcpService {
      * @return projects projects
      * @throws IOException IOException
      */
-    public JsonNode getAllDeployments (String token, String paas, String namespace)
+    public List<Deployment> getAllDeployments (String token, String paas, String namespace)
             throws IOException {
 
         String ocpApiBuilder="/apis/apps/v1/namespaces/";
 
         String uri = paas +ocpApiBuilder
                 +namespace+DEPLOYMENTS;
-
+        List ocpDeploymentList = new ArrayList();
         HttpHeaders authHeaders = Util.createTokenAuthorizationHeaders(token);
         HttpEntity<String[]> httpEntity = new HttpEntity<>(authHeaders);
 
         ResponseEntity<String> response = restTemplate().exchange(uri,
                 HttpMethod.GET,  httpEntity, String.class);
-        String responseData;
-        responseData = response.getBody();
 
-        return JsonTools.convertToJson(responseData);
+        String responseDataRaw;
+        responseDataRaw = response.getBody();
+
+        JsonNode itemsDeployments = JsonTools.convertToJson(responseDataRaw).get("items");
+
+        for (final JsonNode items : itemsDeployments) {
+
+            gDeployment ocpDeployment = extractOpenshiftDeploymentConfigTo(items, "");
+            ocpDeploymentList.add(ocpDeployment);
+        }
+
+
+        return ocpDeploymentList;
+
 
     }
 
-    /**
-     * Returns all deployments from a project in openshift
-     * This method infers the pass uri from parameter envCluster
-     *
-     * @param token token
-     * @return projects projects
-     * @throws IOException IOException
-     */
-    public DeploymentConfigList getAllDeployments2 (String token, String paas, String namespace)
-            throws IOException {
+    public Deployment extractOpenshiftDeploymentConfigTo(JsonNode item,  String projectName) {
 
-        String ocpApiBuilder="/apis/apps/v1/namespaces/";
+        Deployment deployment = new Deployment();
 
-        String uri = paas +ocpApiBuilder
-                +namespace+DEPLOYMENTS;
+        String deploymentName = myRegex.matcher(item.get(METADATA).get("name").toString()).replaceAll("");
 
-        HttpHeaders authHeaders = Util.createTokenAuthorizationHeaders(token);
-        HttpEntity<String[]> httpEntity = new HttpEntity<>(authHeaders);
+        deployment.setProjectName(projectName);
+        deployment.setEnvironment("dev");
+        deployment.setDate(LocalDate.now());
+        deployment.setDeployName(deploymentName);
 
-        ResponseEntity<DeploymentConfigList> response = restTemplate().exchange(uri,
-                HttpMethod.GET,  httpEntity, DeploymentConfigList.class);
+        deployment.setDynaMicroName("");
 
-        DeploymentConfigList responseData = response.getBody();
 
-        return responseData;
+        JsonNode containers = item.get("spec").get("template").get("spec").get("containers");
+        String imageName="";
+        String readinessPath = null;
+        String livenessPath = null;
+        Map<String,String> envVarList = new HashMap<>();
+        for (final JsonNode container : containers) {
+            imageName = myRegex.matcher(container.get("image").toString()).replaceAll("");
+            //get environment variables
+            JsonNode envVariables = container.get("env");
+            //get liveness path
+            JsonNode livenessProbe = container.get("livenessProbe");
+            //get readiness path
+            JsonNode readinessProbe = container.get("readinessProbe");
+            if(livenessProbe != null && livenessProbe.get("httpGet") != null){
+                livenessPath = livenessProbe.get("httpGet").get("path").asText();
+            }
+            if(readinessProbe != null && readinessProbe.get("httpGet") != null){
+                readinessPath = readinessProbe.get("httpGet").get("path").asText();
+            }
 
+            envVarList =  PodUtils.extractEnvironmentVariables(envVariables);
+            deployment.setEnvironmentVars(PodUtils.convertToDBFormatEnvironmentVariables(envVariables));
+        }
+        if (item.get("status").get("replicas") != null) {
+            deployment.setReplicas(item.get("status").get("replicas").asInt());
+        }
+        deployment.setReadinessPath(readinessPath);
+        deployment.setLivenessPath(livenessPath);
+        deployment.setMicroName(deploymentName);
+        deployment.setDeployImage(imageName);
+
+
+        //set url
+        if (envVarList.get("BUILD_URL") == null) {
+            //url is "none" if the field is null
+            deployment.setBuildUrl("none");
+        } else {
+            //set the url if is not null
+            deployment.setBuildUrl(envVarList.get("BUILD_URL"));
+        }
+        if (envVarList.get("ARTIFACT_URL") == null) {
+            //url is "none" if the field is null
+            deployment.setArtifactUrl("none");
+        } else {
+            //set the artifact if is not null
+            deployment.setArtifactUrl(envVarList.get("ARTIFACT_URL"));
+        }
+
+        return deployment;
     }
 
     /**

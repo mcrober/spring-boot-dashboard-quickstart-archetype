@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
+import java.time.LocalDate;
 
 
 @RestController
@@ -27,10 +28,29 @@ class GitController {
     GitReposResponse[] repos ( @RequestHeader String token,
                                @RequestHeader String paas   ) throws IOException {
 
-        GitReposResponse[] gitResponse = gitService.getRepos(token,paas);
+        GitReposResponse[] gitResponse = gitService.getRepos(token, paas);
 
-        GitRepos gitRepos = new GitRepos();
-        gitRepository.save(gitRepos);
+        LocalDate date = LocalDate.now();
+
+        for (int i = 0; i < gitResponse.length; i++){
+            GitRepos gitRepos = new GitRepos();
+            gitRepos.setRepoName(gitResponse[i].getUrl());
+            gitRepos.setReposUrl(gitResponse[i].getUrl());
+            gitRepos.setOrganization("barmanyrober");
+            gitRepos.setDate(date);
+            gitRepository.save(gitRepos);
+        }
         return gitResponse;
     }
+
+    @GetMapping("/pom")
+    GitReposResponse[] pom ( @RequestHeader String token,
+                             @RequestHeader String paas   ) throws IOException {
+
+        gitService.getDataGit(token,paas,paas);
+
+
+        return null;
+    }
+
 }

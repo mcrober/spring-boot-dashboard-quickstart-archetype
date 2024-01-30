@@ -37,7 +37,7 @@ public class PomUtils {
      * @param encodedPom String
      * @return String
      */
-    public String decodeString(String encodedPom) {
+    public static String decodeString(String encodedPom) {
         return new String(Base64.decodeBase64(encodedPom));
     }
 
@@ -49,7 +49,7 @@ public class PomUtils {
      * @throws IOException            IOException
      * @throws XmlPullParserException XmlPullParserException
      */
-    public Model readMavenPom(String rawPom) throws IOException, XmlPullParserException {
+    public static Model readMavenPom(String rawPom) throws IOException, XmlPullParserException {
         Reader reader = new StringReader(rawPom);
         MavenXpp3Reader xpp3Reader = new MavenXpp3Reader();
         Model pomModel = xpp3Reader.read(reader);

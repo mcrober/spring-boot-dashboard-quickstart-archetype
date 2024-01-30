@@ -117,18 +117,16 @@ public class GitServiceImpl implements GitService {
     /**
      * getDataGit
      *
+     * @param token  token
      * @param gitUriPom  String
      * @param gitUriPackage   String
-     * @param darwinParentModel String
-     * @param nuarParentModel   String
      */
     @Override
-    public void getDataGit(String gitUriPom, String gitUriPackage, String darwinParentModel,
-                           String nuarParentModel, String realTimeParenModel) {
+    public void getDataGit(String token, String gitUriPom, String gitUriPackage) {
         try {
             //Pom.xml case
             if (gitUriPom != null) {
-                callGitUriAndRegisterPomInfo(gitUriPom,darwinParentModel,nuarParentModel, realTimeParenModel);
+                callGitUriAndRegisterPomInfo(gitUriPom,gitUriPackage);
             }
         } catch (HttpClientErrorException e) {
             if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
@@ -144,6 +142,31 @@ public class GitServiceImpl implements GitService {
             }
         } catch (Exception e) {
             log.debug("Error " + gitUriPom, e);
+
+        }
+    }
+
+    /**
+     * callGitUriAndRegisterPomInfo
+     * @param gitUri gitUri
+     * @param gitUriPackage gitUriPackage
+     * @throws IOException IOException
+     * @throws XmlPullParserException XmlPullParserException
+     */
+    private void callGitUriAndRegisterPomInfo(String gitUri,  String gitUriPackage)
+            throws IOException, XmlPullParserException {
+
+        ResponseEntity<GitResponse> response = callGitRetryingOnReferenceError(gitUri);
+
+        if(response.getBody() == null){
+            throw new IllegalArgumentException("Git response for pom is empty");
+        } else{
+            GitResponse responseBody = response.getBody();
+
+            String rawPom = PomUtils.decodeString(responseBody.getContent());
+            Model pomModel = PomUtils.readMavenPom(rawPom);
+
+            String parent = pomModel.getParent() == null ? "noParent" : pomModel.getParent().toString();
 
         }
     }
@@ -221,31 +244,7 @@ public class GitServiceImpl implements GitService {
 
     }
 
-    /**
-     * callGitUriAndRegisterPomInfo
-     * @param gitUri gitUri
-     * @param darwinParentModel darwinParentModel
-     * @param nuarParentModel nuarParentModel
-     * @throws IOException IOException
-     * @throws XmlPullParserException XmlPullParserException
-     */
-    private void callGitUriAndRegisterPomInfo(String gitUri,  String darwinParentModel,
-                                              String nuarParentModel, String realTimeParenModel)
-            throws IOException, XmlPullParserException {
-        ResponseEntity<GitResponse> response = callGitRetryingOnReferenceError(gitUri);
 
-        if(response.getBody() == null){
-            throw new IllegalArgumentException("Git response for pom is empty");
-        } else{
-            GitResponse responseBody = response.getBody();
-
-            //String rawPom = PomUtils.decodeString(deploymentData.getEncodedPom());
-            //Model pomModel = PomUtils.readMavenPom(rawPom);
-
-            // String parent = pomModel.getParent() == null ? "noParent" : pomModel.getParent().toString();
-
-        }
-    }
 
     /**
      * getHttpEntity
@@ -253,8 +252,9 @@ public class GitServiceImpl implements GitService {
      * @returnHttpEntity
      */
     private HttpEntity<GitResponse> getHttpEntity() {
-        return new HttpEntity<GitResponse>(Util.createAuthorizationHeaders("",""));
-        //gitProperties.getUser(), gitProperties.getToken()
+        HttpHeaders authHeaders = Util.createTokenAuthorizationHeaders("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");
+        HttpEntity<GitResponse> httpEntity = new HttpEntity<>(authHeaders);
+        return httpEntity;
     }
 
 
