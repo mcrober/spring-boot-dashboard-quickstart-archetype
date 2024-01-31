@@ -34,7 +34,8 @@ class GitController {
 
         for (int i = 0; i < gitResponse.length; i++){
             GitRepos gitRepos = new GitRepos();
-            gitRepos.setRepoName(gitResponse[i].getUrl());
+            gitRepos.setFullName(gitResponse[i].getFull_name());
+            gitRepos.setRepoName(gitResponse[i].getName());
             gitRepos.setReposUrl(gitResponse[i].getUrl());
             gitRepos.setOrganization("barmanyrober");
             gitRepos.setDate(date);
@@ -48,7 +49,10 @@ class GitController {
                              @RequestHeader String paas   ) throws IOException {
 
         gitService.getDataGit(token,paas,paas);
+        String pomSuffix = "/contents/pom.xml";
 
     }
+
+
 
 }

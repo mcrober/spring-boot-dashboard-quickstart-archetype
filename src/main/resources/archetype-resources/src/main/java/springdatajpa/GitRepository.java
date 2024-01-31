@@ -5,5 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface GitRepository extends JpaRepository<GitRepos, Long>{
 
-
+    GitRepos findByRepoName ( String repoName);
 }

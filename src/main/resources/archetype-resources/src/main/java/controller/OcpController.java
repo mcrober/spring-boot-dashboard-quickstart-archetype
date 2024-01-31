@@ -51,11 +51,13 @@ class OcpController {
                                             @RequestHeader String namespace
     )  {
         DeploymentConfigList deploymentsConfig = ocpService.getAllDeploymentsConfig(token,paas,namespace);
-        for (int i=0;i<=deploymentsConfig.getItems().size();i++) {
+        for (int i=0;i<deploymentsConfig.getItems().size();i++) {
             Deployment deployment = new Deployment();
             deployment.setDeployName(deploymentsConfig.getItems().get(i).getMetadata().getName());
             LocalDate date = LocalDate.now();
             deployment.setDate(date);
+            deployment.setEnvironment("dev");
+            deployment.setProjectName("barmanyrober");
             deploymentRepository.save(deployment);
         }
         return deploymentsConfig;
