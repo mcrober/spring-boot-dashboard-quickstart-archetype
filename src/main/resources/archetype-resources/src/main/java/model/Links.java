@@ -6,7 +6,6 @@ import lombok.Data;
  * Git
  * Response
  * ImageType
- * @author Santander Technology
  */
 @Data
 public class Links {

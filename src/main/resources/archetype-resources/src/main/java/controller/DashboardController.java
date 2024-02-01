@@ -32,19 +32,20 @@ class DashboardController {
     private GitRepository gitRepository;
 
     @GetMapping("/framework")
-    void framework (   ) throws IOException {
+    String framework (   ) throws IOException {
 
         List<Deployment> deployments = deploymentRepository.findAll();
         String pomSuffix = "/contents/pom.xml";
+        StringBuilder result = new StringBuilder();
 
         for (Deployment deployment : deployments) {
             log.info(deployment.getDeployName());
             GitRepos gitRepos = gitRepository.findByRepoName(deployment.getDeployName());
             if (gitRepos != null) {
-                gitService.getDataGit("", gitRepos.getReposUrl() + pomSuffix,
-                        gitRepos.getReposUrl()+"/contents/package.json");
+                result.append(gitService.getDataGit("", gitRepos.getReposUrl() + pomSuffix,
+                        gitRepos.getReposUrl() + "/contents/package.json"));
             }
         }
-
+        return result.toString();
     }
 }

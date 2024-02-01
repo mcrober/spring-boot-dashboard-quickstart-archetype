@@ -46,9 +46,9 @@ class GitController {
 
     @GetMapping("/pom")
     void pom ( @RequestHeader String token,
-                             @RequestHeader String paas   ) throws IOException {
+               @RequestHeader String paas   ) throws IOException {
 
-        gitService.getDataGit(token,paas,paas);
+        String pomParent = gitService.getDataGit(token,paas,paas);
         String pomSuffix = "/contents/pom.xml";
 
     }

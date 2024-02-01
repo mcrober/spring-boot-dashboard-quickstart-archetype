@@ -24,7 +24,6 @@ import java.time.LocalDate;
  *
  * Entity for table
  * INPUT_OCP_DEPLOYS
- * @author Santander Technology
  */
 @Entity
 @Table(name = "INPUT_OCP_DEPLOYS")

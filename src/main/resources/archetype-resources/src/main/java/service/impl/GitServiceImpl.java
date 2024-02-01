@@ -122,17 +122,19 @@ public class GitServiceImpl implements GitService {
      * @param gitUriPackage   String
      */
     @Override
-    public void getDataGit(String token, String gitUriPom, String gitUriPackage) {
+    public String getDataGit(String token, String gitUriPom, String gitUriPackage) {
+        String result="";
         try {
             //Pom.xml case
             if (gitUriPom != null) {
-                callGitUriAndRegisterPomInfo(gitUriPom,gitUriPackage);
+                result = callGitUriAndRegisterPomInfo(gitUriPom,gitUriPackage);
             }
         } catch (HttpClientErrorException e) {
             if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
                 //Try with package.json
                 try {
-                    callGitUriAndRegisterPackageInfo(gitUriPackage);
+                    PackageJson packageJson = callGitUriAndRegisterPackageInfo(gitUriPackage);
+                    result = packageJson.getDependencies().toString();
                 } catch(Exception exception){
                     log.debug("Error " + gitUriPackage, exception);
 
@@ -142,8 +144,8 @@ public class GitServiceImpl implements GitService {
             }
         } catch (Exception e) {
             log.debug("Error " + gitUriPom, e);
-
         }
+        return result;
     }
 
     /**
@@ -225,11 +227,12 @@ public class GitServiceImpl implements GitService {
      * callGitUriAndRegisterPackageInfo
      *
      * @param gitUriPackage gitUriPackage
+     * @return package.json
      */
-    private void callGitUriAndRegisterPackageInfo(String gitUriPackage) {
+    private PackageJson callGitUriAndRegisterPackageInfo(String gitUriPackage) {
 
         ResponseEntity<GitResponse> response = callGitRetryingOnReferenceError(gitUriPackage);
-
+        PackageJson packageJson;
         if(response.getBody() == null){
             throw new IllegalArgumentException("Git response for package is empty");
         } else{
@@ -237,11 +240,12 @@ public class GitServiceImpl implements GitService {
             String encodedPom = responseBody == null ? "" : responseBody.getContent();
             String rawContent = new String(Base64.decodeBase64(encodedPom));
 
-            PackageJson packageJson = new Gson().fromJson(rawContent, PackageJson.class);
+            packageJson = new Gson().fromJson(rawContent, PackageJson.class);
             Map<String,String> dependencies = packageJson.getDependencies();
             Map<String,String> devDependencies = packageJson.getDevDependencies();
             log.info(dependencies.toString());
         }
+        return packageJson;
 
     }
 

@@ -9,7 +9,6 @@ import java.util.Map;
  * Response for
  * Json
  *
- * @author Santander Technology
  */
 @Data
 public class PackageJson {

@@ -10,7 +10,6 @@ import java.io.LineNumberReader;
 import java.nio.charset.Charset;
 /**
  * Class of Utils
- * @author Santander Technology
  **/
 public class Util {
 
