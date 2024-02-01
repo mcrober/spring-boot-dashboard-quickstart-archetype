@@ -240,7 +240,7 @@ public class GitServiceImpl implements GitService {
             PackageJson packageJson = new Gson().fromJson(rawContent, PackageJson.class);
             Map<String,String> dependencies = packageJson.getDependencies();
             Map<String,String> devDependencies = packageJson.getDevDependencies();
-
+            log.info(dependencies.toString());
         }
 
     }
