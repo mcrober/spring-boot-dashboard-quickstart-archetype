@@ -4,7 +4,7 @@ package ${package}.controller;
 import com.fasterxml.jackson.databind.JsonNode;
 import ${package}.service.OcpService;
 import ${package}.model.dao.git.Deployment;
-import ${package}.springdatajpa.DeploymentRepository;
+import ${package}.jpa.DeploymentJpaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import io.fabric8.openshift.api.model.DeploymentConfigList;
@@ -19,8 +19,17 @@ class OcpController {
     private OcpService ocpService;
 
     @Autowired
-    private DeploymentRepository deploymentRepository;
+    private DeploymentJpaRepository deploymentRepository;
 
+    /**
+     * deployments
+     *
+     * @param token
+     * @param paas
+     * @param namespace
+     * @return
+     * @throws IOException
+     */
     @GetMapping("/deployments")
     List<Deployment> deployments(@RequestHeader String token,
                                  @RequestHeader String paas,
@@ -43,7 +52,7 @@ class OcpController {
      * @param token token
      * @param paas paas
      * @param namespace namespace
-     * @return
+     * @return DeploymentConfigList DeploymentConfigList
      */
     @GetMapping("/deploymentsConfig")
     DeploymentConfigList deploymentsConfig( @RequestHeader String token,

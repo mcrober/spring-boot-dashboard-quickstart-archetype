@@ -1,29 +1,17 @@
 package ${package}.jpa;
 
 import ${package}.model.dao.git.Deployment;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
 @Transactional
-public class DeploymentJpaRepository {
-	
-	@PersistenceContext
-	private EntityManager entityManager;
-	
-	public void insert(Deployment deployment) {
-		entityManager.merge(deployment);
-	}
-	
-	public Deployment findById(long id) {
-		return entityManager.find(Deployment.class, id);
-	}
+public interface DeploymentJpaRepository extends JpaRepository<Deployment, Long> {
 
-	public void deleteById(long id) {
-		Deployment deployment = entityManager.find(Deployment.class, id);
-		entityManager.remove(deployment);
-	}
+	Deployment findById(long id);
+
+	void deleteById(long id) ;
 
 }
+

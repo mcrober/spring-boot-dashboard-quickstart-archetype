@@ -3,7 +3,7 @@ package ${package}.controller;
 import com.fasterxml.jackson.databind.JsonNode;
 import ${package}.service.GitService;
 import ${package}.model.dao.git.GitReposResponse;
-import ${package}.springdatajpa.GitRepository;
+import ${package}.jpa.GitJpaRepository;
 import ${package}.model.dao.git.GitRepos;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,7 @@ class GitController {
     private GitService gitService;
 
     @Autowired
-    private GitRepository gitRepository;
+    private GitJpaRepository gitRepository;
 
     @GetMapping("/repos")
     GitReposResponse[] repos ( @RequestHeader String token,

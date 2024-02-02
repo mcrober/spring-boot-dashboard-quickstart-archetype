@@ -127,13 +127,13 @@ public class GitServiceImpl implements GitService {
         try {
             //Pom.xml case
             if (gitUriPom != null) {
-                result = callGitUriAndRegisterPomInfo(gitUriPom,gitUriPackage);
+                result = callGitUriAndRegisterPomInfo(gitUriPom,gitUriPackage,"");
             }
         } catch (HttpClientErrorException e) {
             if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
                 //Try with package.json
                 try {
-                    PackageJson packageJson = callGitUriAndRegisterPackageInfo(gitUriPackage);
+                    PackageJson packageJson = callGitUriAndRegisterPackageInfo(gitUriPackage,token);
                     result = packageJson.getDependencies().toString();
                 } catch(Exception exception){
                     log.debug("Error " + gitUriPackage, exception);
@@ -155,10 +155,10 @@ public class GitServiceImpl implements GitService {
      * @throws IOException IOException
      * @throws XmlPullParserException XmlPullParserException
      */
-    private String callGitUriAndRegisterPomInfo(String gitUri,  String gitUriPackage)
+    public String callGitUriAndRegisterPomInfo(String gitUri,  String gitUriPackage, String token)
             throws IOException, XmlPullParserException {
         String parent ;
-        ResponseEntity<GitResponse> response = callGitRetryingOnReferenceError(gitUri);
+        ResponseEntity<GitResponse> response = callGitRetryingOnReferenceError(gitUri,token);
 
         if(response.getBody() == null){
             throw new IllegalArgumentException("Git response for pom is empty");
@@ -181,9 +181,10 @@ public class GitServiceImpl implements GitService {
      * @return response entity
      */
     @Override
-    public ResponseEntity<GitResponse> callGitRetryingOnReferenceError(String gitUri){
+    public ResponseEntity<GitResponse> callGitRetryingOnReferenceError(String gitUri, String token){
+        HttpEntity<GitResponse> httpEntity = getHttpEntity(token);
         try {
-            return restTemplate.exchange(gitUri, HttpMethod.GET, getHttpEntity(), GitResponse.class);
+            return restTemplate.exchange(gitUri, HttpMethod.GET, httpEntity, GitResponse.class);
         } catch (HttpClientErrorException e){
             //Tag may have been lower cased
             if(isReferenceNotFoundError(e)){
@@ -191,12 +192,12 @@ public class GitServiceImpl implements GitService {
                 String upperCaseRefUri = splitUri[0] + "=" + splitUri[1].toUpperCase();
                 String developRefUri = splitUri[0] + "=" + "develop";
                 try{
-                    return restTemplate.exchange(upperCaseRefUri, HttpMethod.GET, getHttpEntity(), GitResponse.class);
+                    return restTemplate.exchange(upperCaseRefUri, HttpMethod.GET, httpEntity, GitResponse.class);
                 } catch (HttpClientErrorException exc){
                     //If upper case tag neither exists, try with develop branch
                     if(isReferenceNotFoundError(exc)){
                         //If this file neither exists in develop throw this exception and continue flow
-                        return restTemplate.exchange(developRefUri, HttpMethod.GET, getHttpEntity(), GitResponse.class);
+                        return restTemplate.exchange(developRefUri, HttpMethod.GET, httpEntity, GitResponse.class);
                     } else{
                         throw exc;
                     }
@@ -227,11 +228,12 @@ public class GitServiceImpl implements GitService {
      * callGitUriAndRegisterPackageInfo
      *
      * @param gitUriPackage gitUriPackage
+     * @param token token
      * @return package.json
      */
-    private PackageJson callGitUriAndRegisterPackageInfo(String gitUriPackage) {
+    private PackageJson callGitUriAndRegisterPackageInfo(String gitUriPackage, String token) {
 
-        ResponseEntity<GitResponse> response = callGitRetryingOnReferenceError(gitUriPackage);
+        ResponseEntity<GitResponse> response = callGitRetryingOnReferenceError(gitUriPackage,token);
         PackageJson packageJson;
         if(response.getBody() == null){
             throw new IllegalArgumentException("Git response for package is empty");
@@ -256,7 +258,7 @@ public class GitServiceImpl implements GitService {
      *
      * @returnHttpEntity
      */
-    private HttpEntity<GitResponse> getHttpEntity() {
+    private HttpEntity<GitResponse> getHttpEntity(String token) {
         HttpHeaders authHeaders = Util.createTokenAuthorizationHeaders("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");
         HttpEntity<GitResponse> httpEntity = new HttpEntity<>(authHeaders);
         return httpEntity;

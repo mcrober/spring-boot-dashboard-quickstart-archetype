@@ -6,8 +6,8 @@ import ${package}.service.OcpService;
 import ${package}.service.GitService;
 import ${package}.model.dao.git.Deployment;
 import ${package}.model.dao.git.GitRepos;
-import ${package}.springdatajpa.DeploymentRepository;
-import ${package}.springdatajpa.GitRepository;
+import ${package}.jpa.DeploymentJpaRepository;
+import ${package}.jpa.GitJpaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import lombok.extern.slf4j.Slf4j;
@@ -23,16 +23,21 @@ class DashboardController {
     private OcpService ocpService;
 
     @Autowired
-    private DeploymentRepository deploymentRepository;
+    private DeploymentJpaRepository deploymentRepository;
 
     @Autowired
     private GitService gitService;
 
     @Autowired
-    private GitRepository gitRepository;
+    private GitJpaRepository gitRepository;
 
+    /**
+     *
+     * @return
+     * @throws IOException
+     */
     @GetMapping("/framework")
-    String framework (   ) throws IOException {
+    String framework (@RequestHeader String token   ) throws IOException {
 
         List<Deployment> deployments = deploymentRepository.findAll();
         String pomSuffix = "/contents/pom.xml";
@@ -42,7 +47,7 @@ class DashboardController {
             log.info(deployment.getDeployName());
             GitRepos gitRepos = gitRepository.findByRepoName(deployment.getDeployName());
             if (gitRepos != null) {
-                result.append(gitService.getDataGit("", gitRepos.getReposUrl() + pomSuffix,
+                result.append(gitService.getDataGit(token, gitRepos.getReposUrl() + pomSuffix,
                         gitRepos.getReposUrl() + "/contents/package.json"));
             }
         }

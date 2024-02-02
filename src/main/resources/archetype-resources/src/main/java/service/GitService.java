@@ -33,5 +33,5 @@ public interface GitService {
      * @param gitUri uri to call
      * @return response entity
      */
-    ResponseEntity<GitResponse> callGitRetryingOnReferenceError(String gitUri);
+    ResponseEntity<GitResponse> callGitRetryingOnReferenceError(String gitUri, String token);
 }
