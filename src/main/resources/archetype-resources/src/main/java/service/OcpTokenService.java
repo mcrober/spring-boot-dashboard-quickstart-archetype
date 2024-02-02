@@ -18,7 +18,6 @@ import java.util.Map;
 /**
  * Service Class to get tokens from openshift
  *
- * @author Santander Technology
  */
 @Getter
 @Setter
